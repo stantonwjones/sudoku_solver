@@ -18,10 +18,10 @@ puts "input puzzle name"
 puzzle_name = "puzzles/" + gets.chomp
 puzzle_arr = []
 
-file = File.new(puzzle_name, "r")
-while(line = file.gets)
-  puzzle_arr << line.scan(/\d/)
+File.open(puzzle_name, "r") do |file|
+  while(line = file.gets)
+    puzzle_arr.push line.scan(/\d/)
+  end
 end
-file.close
 
 solve(puzzle_arr)

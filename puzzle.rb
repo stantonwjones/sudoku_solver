@@ -8,3 +8,7 @@ class Puzzle
   
   
 end
+
+class PuzzleReader
+  
+end
