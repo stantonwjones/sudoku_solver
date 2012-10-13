@@ -1,28 +1,34 @@
-class Puzzle 
-  def initialize(values, immutables)
-    @values = values
+class Puzzle
+  attr_accessor :values_matrix
+  
+  def initialize(values_matrix, immutables)
+    @values_matrix = values_matrix
     @immutables = immutables
   end
   
   def get_available(y, x)
-    get_col() & get_row() & get_cell
+    get_col(x) & get_row(y) & get_cell(y, x)
   end
   
-  def get_col
+  def get_col(x)
     
+    
+    (0..9).to_a.map { |digit| digit.to_s } - col_vals
   end
   
-  def get_row
+  def get_row(y)
     
+    (0..9).to_a.map { |digit| digit.to_s } - row_vals
   end
   
-  def get_cell
+  def get_cell(y, x)
     
+    (0..9).to_a.map { |digit| digit.to_s } - cell_vals
   end
 end
 
 def solve(puzzle)
-  
+  puzzle.get_available
 end
 
 def show(puzzle)
