@@ -1,3 +1,5 @@
+# TODO: heuristics, modular cell-value checker, recursive solver itself
+
 class Puzzle
   attr_accessor :values_matrix
   
