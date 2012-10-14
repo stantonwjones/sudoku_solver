@@ -32,7 +32,7 @@ class Puzzle
   end
 end
 
-def solve(puzzle)
+def solve(puzzle) # (, coord)
   puzzle.get_available
 end
 
@@ -47,6 +47,8 @@ while true
   user_in = gets.chomp
   exit if user_in == 'exit'
   puzzle = nil
+  
+  # throw exception if puzzle not 9 x 9
   
   File.open(".puzzles/#{user_in}", "r") do |file|
     line_num = 0
