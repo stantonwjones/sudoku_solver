@@ -6,6 +6,9 @@ class Puzzle
   def initialize(values_matrix, immutables)
     @values_matrix = values_matrix
     @immutables = immutables
+    
+    ###################### test code
+    @values_matrix = Array.new(9) { (1..9).to_a.map { |x| x = x.to_s } }
   end
   
   def get_available(y, x)
@@ -15,20 +18,19 @@ class Puzzle
   end
   
   def get_col(x)
-    
-    
-    # just get the x-th element of each row
-    (0..9).to_a.map { |digit| digit.to_s } - @values_matrix.map { |col| col = col[x] }
+    (1..9).to_a.map { |digit| digit.to_s } - @values_matrix.map { |col| col = col[x] }
   end
   
   def get_row(y)
-    
-    (0..9).to_a.map { |digit| digit.to_s } - @values_matrix[y]
+    (1..9).to_a.map { |digit| digit.to_s } - @values_matrix[y]
   end
   
   def get_cell(y, x)
-    
-    (0..9).to_a.map { |digit| digit.to_s } - cell_vals
+    (1..9).to_a.map { |digit| digit.to_s }
+  puts(((0..2).each do |n|
+      ((y / 3) * 3) + n end).map do |n|
+        (0..2).map do |m|
+          n = ((x / 3) * 3) + m end end)
   end
 end
 
@@ -42,32 +44,36 @@ def show(puzzle)
   end
 end
 
-while true
-  puts "input puzzle name: "
-  user_in = gets.chomp
-  exit if user_in == 'exit'
-  puzzle = nil
-  
-  # throw exception if puzzle not 9 x 9
-  
-  File.open(".puzzles/#{user_in}", "r") do |file|
-    line_num = 0
-    puzzle_arr = []
-    immutables = []
-    
-    file.each do |line|
-      this_line_arr = line.scan(/\d/)
-      puzzle_arr.push this_line_arr
-      
-      this_line_arr.each_with_index do |char, char_index|
-        immutables.push [line_num, char_index] if char != "0" 
-      end
-      
-      line_num += 1
-    end
-    
-    puzzle = Puzzle.new(puzzle_arr, immutables) 
-  end
-  
-  solve puzzle
-end
+################ test code
+puzzle = Puzzle.new nil, nil
+puts puzzle.get_cell(1, 9)
+
+# while true
+  # puts "input puzzle name: "
+  # user_in = gets.chomp
+  # exit if user_in == 'exit'
+  # puzzle = nil
+#   
+  # # throw exception if puzzle not 9 x 9
+#   
+  # File.open(".puzzles/#{user_in}", "r") do |file|
+    # line_num = 0
+    # puzzle_arr = []
+    # immutables = []
+#     
+    # file.each do |line|
+      # this_line_arr = line.scan(/\d/)
+      # puzzle_arr.push this_line_arr
+#       
+      # this_line_arr.each_with_index do |char, char_index|
+        # immutables.push [line_num, char_index] if char != "0" 
+      # end
+#       
+      # line_num += 1
+    # end
+#     
+    # puzzle = Puzzle.new(puzzle_arr, immutables) 
+  # end
+#   
+  # solve puzzle
+# end
