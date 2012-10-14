@@ -7,18 +7,21 @@ class Puzzle
   end
   
   def get_available(y, x)
+    return if @immutables.include? [y, x]
+
     get_col(x) & get_row(y) & get_cell(y, x)
   end
   
   def get_col(x)
     
     
-    (0..9).to_a.map { |digit| digit.to_s } - col_vals
+    # just get the x-th element of each row
+    (0..9).to_a.map { |digit| digit.to_s } - @values_matrix.map { |col| col = col[x] }
   end
   
   def get_row(y)
     
-    (0..9).to_a.map { |digit| digit.to_s } - row_vals
+    (0..9).to_a.map { |digit| digit.to_s } - @values_matrix[y]
   end
   
   def get_cell(y, x)
