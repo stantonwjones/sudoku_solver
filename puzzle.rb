@@ -8,8 +8,6 @@ class Puzzle
   end
   
   def get_available(y, x)
-    #return [] if @immutables.include? [y, x]
-
     get_col(x) & get_row(y) & get_cell(y, x)
   end
   
@@ -32,29 +30,31 @@ class Puzzle
   end
 end
 
-def solve(puzzle, y = 0, x = 0)
-  puts puzzle.immutables.join(', ') + "\n"
-  puts puzzle.get_available(y, x)
-  puzzle.get_available(y, x).each { |box_val| puzzle.values_matrix[y][x] = box_val }
+def solve(puzzle, y = 0, x = 0, stack = 0)
+  tries = puzzle.get_available(y, x)
+  puts stack if tries.empty?
+  return if tries.empty?
+  
+  tries.each { |box_val| puzzle.values_matrix[y][x] = box_val } unless puzzle.immutables.include?([y, x])
   
   if y == 8 && x == 8
-    puzzle.values_matrix.each {|row| puts "#{row.join(' ')}\n" }
+    show puzzle
     exit
   end
   
   if x == 8
+    x = 0
     y += 1
-  else
-    x += 1
   end
   
-  puts x, y
+  x += 1
+  stack += 1
   
-  solve puzzle, y, x
+  solve puzzle, y, x, stack
 end
 
 def show(puzzle)
-  puzzle.each do |line|
+  puzzle.values_matrix.each do |line|
     puts line.join(" ")
   end
 end
