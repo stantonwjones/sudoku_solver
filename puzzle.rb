@@ -31,34 +31,50 @@ class Puzzle
 end
 
 def solve(puzzle, y = 0, x = 0)
+  this_box_mutable = ! puzzle.immutables.include?([y, x])
   next_y = y
   next_x = x
   tries = puzzle.get_available(y, x)
   
-  return if tries.empty?
+  # if unable to proceed, backtrack
+  return if tries.empty? && (y != 8 && x != 8)
+  # if at the end, print and quit
+  if y == 8 && x == 8
+    puzzle.values_matrix[y][x] = tries[0]
+    show puzzle
+    exit
+  end
   
-  print "tries: #{tries.join(' ')} "
-  ((9 - tries.length) * 2).times { print " " }
-  puts "at #{y}, #{x}"
+  # if this spot is mutable, try to solve it with each possible value
+  if this_box_mutable
+    tries.each do |box_val|
+      puzzle.values_matrix[y][x] = box_val
+
+      # if at end of row, go to beginning of next row
+      if x == 8
+        puts "row end"
+        next_x = 0
+        next_y += 1
+      # otherwise move forward one spot in the row
+      else
+        next_x += 1
+      end
+      
+      # now attempt to solve from here
+      solve(puzzle, next_y, next_x)
+    end
+  end
   
+  # moving forward if on an immutable space
+  
+  # if at end of row, go to beginning of next row
   if x == 8
     puts "row end"
     next_x = 0
     next_y += 1
+  # otherwise move forward one spot in the row
   else
     next_x += 1
-  end
-  
-  unless puzzle.immutables.include?([y, x])
-    tries.each do |box_val|
-      puzzle.values_matrix[y][x] = box_val
-      solve(puzzle, next_y, next_x)
-    end
-  end
-    
-  if y == 8 && x == 8
-    show puzzle
-    exit
   end
   
   solve(puzzle, next_y, next_x)
