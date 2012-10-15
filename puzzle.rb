@@ -26,7 +26,7 @@ class Puzzle
     # 0 through 9, thus reporting only the values not already used in the cell
     
     # hard to read, I know, but it was fun to make
-    ((1..9).to_a.map { |digit| digit.to_s }) - (@values_matrix[(((y / 3) * 3)..(((y / 3) * 3) + 2))].map { |stuff| stuff[(((x / 3) * 3)..(((x / 3) * 3) + 2))] }).flatten
+    ((1..9).to_a.map { |digit| digit.to_s }) - (@values_matrix[(((y / 3) * 3)..(((y / 3) * 3) + 2))].map { |row| row[(((x / 3) * 3)..(((x / 3) * 3) + 2))] }).flatten
   end
 end
 
