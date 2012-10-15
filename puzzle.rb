@@ -63,12 +63,11 @@ while true
   print "input puzzle name: "
   user_in = gets.chomp
   exit if user_in == 'exit'
-  puzzle = nil
+  puzzle_arr = []
+  immutables = []
     
   File.open("./puzzles/#{user_in}", "r") do |file|
     line_num = 0
-    puzzle_arr = []
-    immutables = []
     
     file.each do |line|
       this_line_arr = line.scan(/\d/)
@@ -82,9 +81,7 @@ while true
       
       line_num += 1
     end
-    
-    puzzle = Puzzle.new(puzzle_arr, immutables) 
   end
   
-  solve puzzle
+  solve Puzzle.new(puzzle_arr, immutables)
 end
