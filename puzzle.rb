@@ -31,31 +31,37 @@ class Puzzle
 end
 
 def solve(puzzle, y = 0, x = 0)
-  puzzle = puzzle.clone
-  
+  next_y = y
+  next_x = x
   tries = puzzle.get_available(y, x)
+  
+  return if tries.empty?
+  
   print "tries: #{tries.join(' ')} "
   ((9 - tries.length) * 2).times { print " " }
   puts "at #{y}, #{x}"
   
-  return if tries.empty?
+  if x == 8
+    puts "row end"
+    next_x = 0
+    next_y += 1
+  else
+    next_x += 1
+  end
   
+  unless puzzle.immutables.include?([y, x])
+    tries.each do |box_val|
+      puzzle.values_matrix[y][x] = box_val
+      solve(puzzle, next_y, next_x)
+    end
+  end
+    
   if y == 8 && x == 8
     show puzzle
     exit
   end
   
-  if x == 8
-    puts "row end"
-    x = 0
-    y += 1
-  end
-  
-  x += 1
-  
-  tries.each { |box_val| puzzle.values_matrix[y][x] = box_val } unless puzzle.immutables.include?([y, x])
-  
-  solve(puzzle, y, x)
+  solve(puzzle, next_y, next_x)
 end
 
 def show(puzzle)
