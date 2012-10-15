@@ -1,24 +1,20 @@
-# TODO: heuristics, modular cell-value checker, recursive solver itself
-
 class Puzzle
   attr_accessor :values_matrix
+  attr_reader :immutables
   
   def initialize(values_matrix, immutables)
     @values_matrix = values_matrix
     @immutables = immutables
-    
-    ###################### test code
-    @values_matrix = Array.new(9) { (1..9).to_a.map { |x| x = x.to_s } }
   end
   
   def get_available(y, x)
-    return if @immutables.include? [y, x]
+    #return [] if @immutables.include? [y, x]
 
     get_col(x) & get_row(y) & get_cell(y, x)
   end
   
   def get_col(x)
-    (1..9).to_a.map { |digit| digit.to_s } - @values_matrix.map { |col| col = col[x] }
+    (1..9).to_a.map { |digit| digit.to_s } - @values_matrix.map { |col| col[x] }
   end
   
   def get_row(y)
@@ -36,8 +32,25 @@ class Puzzle
   end
 end
 
-def solve(puzzle) # (, coord)
-  puzzle.get_available
+def solve(puzzle, y = 0, x = 0)
+  puts puzzle.immutables.join(', ') + "\n"
+  puts puzzle.get_available(y, x)
+  puzzle.get_available(y, x).each { |box_val| puzzle.values_matrix[y][x] = box_val }
+  
+  if y == 8 && x == 8
+    puzzle.values_matrix.each {|row| puts "#{row.join(' ')}\n" }
+    exit
+  end
+  
+  if x == 8
+    y += 1
+  else
+    x += 1
+  end
+  
+  puts x, y
+  
+  solve puzzle, y, x
 end
 
 def show(puzzle)
@@ -46,36 +59,32 @@ def show(puzzle)
   end
 end
 
-################ test code
-puzzle = Puzzle.new nil, nil
-puzzle.get_cell(8, 3)
-
-# while true
-  # puts "input puzzle name: "
-  # user_in = gets.chomp
-  # exit if user_in == 'exit'
-  # puzzle = nil
-#   
-  # # throw exception if puzzle not 9 x 9
-#   
-  # File.open(".puzzles/#{user_in}", "r") do |file|
-    # line_num = 0
-    # puzzle_arr = []
-    # immutables = []
-#     
-    # file.each do |line|
-      # this_line_arr = line.scan(/\d/)
-      # puzzle_arr.push this_line_arr
-#       
-      # this_line_arr.each_with_index do |char, char_index|
-        # immutables.push [line_num, char_index] if char != "0" 
-      # end
-#       
-      # line_num += 1
-    # end
-#     
-    # puzzle = Puzzle.new(puzzle_arr, immutables) 
-  # end
-#   
-  # solve puzzle
-# end
+while true
+  print "input puzzle name: "
+  user_in = gets.chomp
+  exit if user_in == 'exit'
+  puzzle = nil
+    
+  File.open("./puzzles/#{user_in}", "r") do |file|
+    line_num = 0
+    puzzle_arr = []
+    immutables = []
+    
+    file.each do |line|
+      this_line_arr = line.scan(/\d/)
+      puzzle_arr.push this_line_arr
+      
+      raise "improper puzzle dimensions" if this_line_arr.length != 9
+      
+      this_line_arr.each_with_index do |char, char_index|
+        immutables.push [line_num, char_index] if char != "0" 
+      end
+      
+      line_num += 1
+    end
+    
+    puzzle = Puzzle.new(puzzle_arr, immutables) 
+  end
+  
+  solve puzzle
+end
