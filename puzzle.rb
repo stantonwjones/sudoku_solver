@@ -30,12 +30,15 @@ class Puzzle
   end
 end
 
-def solve(puzzle, y = 0, x = 0, stack = 0)
-  tries = puzzle.get_available(y, x)
-  puts stack if tries.empty?
-  return if tries.empty?
+def solve(puzzle, y = 0, x = 0)
+  puzzle = puzzle.clone
   
-  tries.each { |box_val| puzzle.values_matrix[y][x] = box_val } unless puzzle.immutables.include?([y, x])
+  tries = puzzle.get_available(y, x)
+  print "tries: #{tries.join(' ')} "
+  ((9 - tries.length) * 2).times { print " " }
+  puts "at #{y}, #{x}"
+  
+  return if tries.empty?
   
   if y == 8 && x == 8
     show puzzle
@@ -43,14 +46,16 @@ def solve(puzzle, y = 0, x = 0, stack = 0)
   end
   
   if x == 8
+    puts "row end"
     x = 0
     y += 1
   end
   
   x += 1
-  stack += 1
   
-  solve puzzle, y, x, stack
+  tries.each { |box_val| puzzle.values_matrix[y][x] = box_val } unless puzzle.immutables.include?([y, x])
+  
+  solve(puzzle, y, x)
 end
 
 def show(puzzle)
