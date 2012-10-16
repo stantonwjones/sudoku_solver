@@ -1,16 +1,5 @@
 def get_available(puzzle, y, x)
   return [:immutable] if puzzle[y][x] != "0"
-  
-  # find the union of 3 sets:
-  # the column, the row, and lastly:
-  # for each member of values matrix within the region spanning from the truncated values
-  # of y/3, x/3 to y/3 + 2, x/3 + 2, which form a given 9-box cell of the sudoku puzzle,
-  # read the appropriate value, and subtract the results from a char array of the digits
-  # 0 through 9, thus reporting only the values not already used in the cell
-  
-  # hard to read, I know, but it was fun to make
-  
-  # would split this line better if I knew a way to do so in ruby
   ((1..9).to_a.map { |digit| digit.to_s } - puzzle.map { |col| col[x] }) & ((1..9).to_a.map { |digit| digit.to_s } - puzzle[y]) & (((1..9).to_a.map { |digit| digit.to_s }) - (puzzle[(((y / 3) * 3)..(((y / 3) * 3) + 2))].map { |row| row[(((x / 3) * 3)..(((x / 3) * 3) + 2))] }).flatten)
 end
 
