@@ -1,2 +1,2 @@
 == Sudoku Solver
-Using a different method, this should be able to solve arbitrary puzzles with recursion and search.
+Solve sudoku puzzles using depth-first search, recursion, and functional-programming techniques
