@@ -1,4 +1,6 @@
 def get_available(puzzle, y, x)
+  return [:immutable] if puzzle[y][x] != "0"
+  
   # find the union of 3 sets:
   # the column, the row, and lastly:
   # for each member of values matrix within the region spanning from the truncated values
@@ -9,57 +11,31 @@ def get_available(puzzle, y, x)
   # hard to read, I know, but it was fun to make
   
   # would split this line better if I knew a way to do so in ruby
-  ((1..9).to_a.map { |digit| digit.to_s } - puzzle.map { |col| col[x] }) & ((1..9).to_a.map { |digit| digit.to_s } - puzzle[y]) & (((1..9).to_a.map { |digit| digit.to_s }) - (puzzle[(((y / 3) * 3)..(((y / 3) * 3) + 2))].map { |row| row[(((x / 3) * 3)..(((x / 3) * 3) + 2))] }).flatten)
+  (((1..9).to_a.map { |digit| digit.to_s } - puzzle.map { |col| col[x] }) & ((1..9).to_a.map { |digit| digit.to_s } - puzzle[y]) & (((1..9).to_a.map { |digit| digit.to_s }) - (puzzle[(((y / 3) * 3)..(((y / 3) * 3) + 2))].map { |row| row[(((x / 3) * 3)..(((x / 3) * 3) + 2))] }).flatten)) + [:end_of_list]
 end
 
 def solve(puzzle, y = 0, x = 0)
-  tries = puzzle.get_available(y, x)
-  
-  # if unable to proceed, backtrack
-  return if tries.empty? && (y != 8 && x != 8)
-  # if at the end, print and quit
-  if y == 8 && x == 8
-    puzzle[y][x] = tries[0]
-    show(puzzle)
-    exit
-  end
-  
-  next_y = y
-  next_x = x
-  
-  # if this spot is mutable, try to solve it with each possible value
-  if ! (puzzle[y][x] == "0")
-    tries.each do |box_val|
-      puzzle[y][x] = box_val
+  puts get_available(puzzle, y, x); puts
+  get_available(puzzle, y, x).each do |box_value|
+    return if box_value == :end_of_list
 
-      # if at end of row, go to beginning of next row
-      if x == 8
-        puts "row end"
-        next_x = 0
-        next_y += 1
-      # otherwise move forward one spot in the row
-      else
-        next_x += 1
-      end
-      
-      # now attempt to solve from here
-      solve(puzzle, next_y, next_x)
+    puzzle[y][x] = box_value unless box_value == :immutable
+
+    if y == 8 && x == 8
+      show(puzzle)
+      exit
     end
+        
+    if x == 8
+      x = 0
+      y += 1
+    else
+      x += 1
+    end
+    
+    show puzzle; puts
+    solve(puzzle, y, x)
   end
-  
-  # moving forward if on an immutable space
-  
-  # if at end of row, go to beginning of next row
-  if x == 8
-    puts "row end"
-    next_x = 0
-    next_y += 1
-  # otherwise move forward one spot in the row
-  else
-    next_x += 1
-  end
-  
-  solve(puzzle, next_y, next_x)
 end
 
 def show(puzzle)
@@ -88,6 +64,4 @@ def get_file
   puzzle_arr
 end
 
-while true
-  solve(get_file)
-end
+solve(get_file)
