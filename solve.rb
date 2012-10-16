@@ -6,7 +6,6 @@ end
 def solve(puzzle, y = 0, x = 0)
   available_guesses = get_available(puzzle, y, x)
 
-  ########### DEBUG
   if available_guesses.empty? || available_guesses[0] == :immutable
     puts "no guesses available         at coord: #{y}, #{x}"
     puts
@@ -16,16 +15,16 @@ def solve(puzzle, y = 0, x = 0)
     puts " at coord: #{y}, #{x}"
     puts
   end
-  #############
   
   return if available_guesses.empty?
 
-  
   available_guesses.each do |box_value|
     puzzle[y][x] = box_value unless box_value == :immutable
 
     if y == 8 && x == 8
       show(puzzle)
+      puts
+      puts "Finished."
       exit
     end
         
