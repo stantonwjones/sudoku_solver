@@ -1,46 +1,26 @@
-# TODO: remove immutables array and use zero instead
-# then no puzzle object is needed -- instead can be a raw 2D array passed between functions
-
-class Puzzle
-  attr_accessor :values_matrix
+def get_available(puzzle, y, x)
+  # find the union of 3 sets:
+  # the column, the row, and lastly:
+  # for each member of values matrix within the region spanning from the truncated values
+  # of y/3, x/3 to y/3 + 2, x/3 + 2, which form a given 9-box cell of the sudoku puzzle,
+  # read the appropriate value, and subtract the results from a char array of the digits
+  # 0 through 9, thus reporting only the values not already used in the cell
   
-  def initialize(values_matrix)
-    @values_matrix = values_matrix
-  end
+  # hard to read, I know, but it was fun to make
   
-  def get_available(y, x)
-    get_col(x) & get_row(y) & get_cell(y, x)
-  end
-  
-  def get_col(x)
-    (1..9).to_a.map { |digit| digit.to_s } - @values_matrix.map { |col| col[x] }
-  end
-  
-  def get_row(y)
-    (1..9).to_a.map { |digit| digit.to_s } - @values_matrix[y]
-  end
-  
-  def get_cell(y, x)
-    # for each member of values matrix within the region spanning from the truncated values
-    # of y/3, x/3 to y/3 + 2, x/3 + 2, which form a given 9-box cell of the sudoku puzzle,
-    # read the appropriate value, and subtract the results from a char array of the digits
-    # 0 through 9, thus reporting only the values not already used in the cell
-    
-    # hard to read, I know, but it was fun to make
-    ((1..9).to_a.map { |digit| digit.to_s }) - (@values_matrix[(((y / 3) * 3)..(((y / 3) * 3) + 2))].map { |row| row[(((x / 3) * 3)..(((x / 3) * 3) + 2))] }).flatten
-  end
+  # would split this line better if I knew a way to do so in ruby
+  ((1..9).to_a.map { |digit| digit.to_s } - puzzle.map { |col| col[x] }) & ((1..9).to_a.map { |digit| digit.to_s } - puzzle[y]) & (((1..9).to_a.map { |digit| digit.to_s }) - (puzzle[(((y / 3) * 3)..(((y / 3) * 3) + 2))].map { |row| row[(((x / 3) * 3)..(((x / 3) * 3) + 2))] }).flatten)
 end
 
 def solve(puzzle, y = 0, x = 0)
-  this_box_mutable = ! (puzzle[y][x] == "0")
   tries = puzzle.get_available(y, x)
   
   # if unable to proceed, backtrack
   return if tries.empty? && (y != 8 && x != 8)
   # if at the end, print and quit
   if y == 8 && x == 8
-    puzzle.values_matrix[y][x] = tries[0]
-    show puzzle
+    puzzle[y][x] = tries[0]
+    show(puzzle)
     exit
   end
   
@@ -48,9 +28,9 @@ def solve(puzzle, y = 0, x = 0)
   next_x = x
   
   # if this spot is mutable, try to solve it with each possible value
-  if this_box_mutable
+  if ! (puzzle[y][x] == "0")
     tries.each do |box_val|
-      puzzle.values_matrix[y][x] = box_val
+      puzzle[y][x] = box_val
 
       # if at end of row, go to beginning of next row
       if x == 8
@@ -83,7 +63,7 @@ def solve(puzzle, y = 0, x = 0)
 end
 
 def show(puzzle)
-  puzzle.values_matrix.each do |line|
+  puzzle.each do |line|
     puts line.join(" ")
   end
 end
@@ -93,7 +73,7 @@ def get_file
   user_in = gets.chomp
   exit if user_in == 'exit'
   puzzle_arr = []
-    
+  
   File.open("./puzzles/#{user_in}", "r") do |file|
     line_num = 0
     
@@ -104,6 +84,8 @@ def get_file
       raise "improper puzzle dimensions" if this_line_arr.length != 9
     end
   end
+  
+  puzzle_arr
 end
 
 while true
