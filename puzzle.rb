@@ -11,14 +11,15 @@ def get_available(puzzle, y, x)
   # hard to read, I know, but it was fun to make
   
   # would split this line better if I knew a way to do so in ruby
-  (((1..9).to_a.map { |digit| digit.to_s } - puzzle.map { |col| col[x] }) & ((1..9).to_a.map { |digit| digit.to_s } - puzzle[y]) & (((1..9).to_a.map { |digit| digit.to_s }) - (puzzle[(((y / 3) * 3)..(((y / 3) * 3) + 2))].map { |row| row[(((x / 3) * 3)..(((x / 3) * 3) + 2))] }).flatten)) + [:end_of_list]
+  ((1..9).to_a.map { |digit| digit.to_s } - puzzle.map { |col| col[x] }) & ((1..9).to_a.map { |digit| digit.to_s } - puzzle[y]) & (((1..9).to_a.map { |digit| digit.to_s }) - (puzzle[(((y / 3) * 3)..(((y / 3) * 3) + 2))].map { |row| row[(((x / 3) * 3)..(((x / 3) * 3) + 2))] }).flatten)
 end
 
 def solve(puzzle, y = 0, x = 0)
-  puts get_available(puzzle, y, x); puts
-  get_available(puzzle, y, x).each do |box_value|
-    return if box_value == :end_of_list
-
+  available_guesses = get_available(puzzle, y, x)
+  
+  return if available_guesses.empty?
+  
+  available_guesses.each do |box_value|
     puzzle[y][x] = box_value unless box_value == :immutable
 
     if y == 8 && x == 8
@@ -33,7 +34,7 @@ def solve(puzzle, y = 0, x = 0)
       x += 1
     end
     
-    show puzzle; puts
+    show(puzzle); puts ## DEBUG
     solve(puzzle, y, x)
   end
 end
