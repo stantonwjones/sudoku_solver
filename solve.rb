@@ -5,8 +5,21 @@ end
 
 def solve(puzzle, y = 0, x = 0)
   available_guesses = get_available(puzzle, y, x)
+
+  ########### DEBUG
+  if available_guesses.empty? || available_guesses[0] == :immutable
+    puts "no guesses available         at coord: #{y}, #{x}"
+    puts
+  else
+    print "available guesses: " + available_guesses.join(' ')
+    (9 - ((available_guesses.length * 2) - 1)).times { print " " }
+    puts " at coord: #{y}, #{x}"
+    puts
+  end
+  #############
   
   return if available_guesses.empty?
+
   
   available_guesses.each do |box_value|
     puzzle[y][x] = box_value unless box_value == :immutable
@@ -35,12 +48,9 @@ def show(puzzle)
 end
 
 def get_file
-  print "input puzzle name or 'exit': "
-  user_in = gets.chomp
-  exit if user_in == 'exit'
   puzzle_arr = []
   
-  File.open("./puzzles/#{user_in}", "r") do |file|
+  File.open("./puzzles/#{gets.chomp}", "r") do |file|
     line_num = 0
     
     file.each do |line|
