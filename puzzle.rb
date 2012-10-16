@@ -1,10 +1,11 @@
+# TODO: remove immutables array and use zero instead
+# then no puzzle object is needed -- instead can be a raw 2D array passed between functions
+
 class Puzzle
   attr_accessor :values_matrix
-  attr_reader :immutables
   
-  def initialize(values_matrix, immutables)
+  def initialize(values_matrix)
     @values_matrix = values_matrix
-    @immutables = immutables
   end
   
   def get_available(y, x)
@@ -31,9 +32,7 @@ class Puzzle
 end
 
 def solve(puzzle, y = 0, x = 0)
-  this_box_mutable = ! puzzle.immutables.include?([y, x])
-  next_y = y
-  next_x = x
+  this_box_mutable = ! (puzzle[y][x] == "0")
   tries = puzzle.get_available(y, x)
   
   # if unable to proceed, backtrack
@@ -44,6 +43,9 @@ def solve(puzzle, y = 0, x = 0)
     show puzzle
     exit
   end
+  
+  next_y = y
+  next_x = x
   
   # if this spot is mutable, try to solve it with each possible value
   if this_box_mutable
@@ -86,12 +88,11 @@ def show(puzzle)
   end
 end
 
-while true
-  print "input puzzle name: "
+def get_file
+  print "input puzzle name or 'exit': "
   user_in = gets.chomp
   exit if user_in == 'exit'
   puzzle_arr = []
-  immutables = []
     
   File.open("./puzzles/#{user_in}", "r") do |file|
     line_num = 0
@@ -101,14 +102,10 @@ while true
       puzzle_arr.push this_line_arr
       
       raise "improper puzzle dimensions" if this_line_arr.length != 9
-      
-      this_line_arr.each_with_index do |char, char_index|
-        immutables.push [line_num, char_index] if char != "0" 
-      end
-      
-      line_num += 1
     end
   end
-  
-  solve Puzzle.new(puzzle_arr, immutables)
+end
+
+while true
+  solve(get_file)
 end
