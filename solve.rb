@@ -32,7 +32,7 @@ def get_next_move(moves_hash, steps_ahead = 1) # do you see?  DO YOU SEE?  http:
   puts " war."
   
   # Error is here?
-  get_next_move(get_available(moves_hash[:puzzle], 9 / (moves_hash[:y] + moves_hash[:x] + steps_ahead), (moves_hash[:y] + moves_hash[:x] + steps_ahead) % 9), steps_ahead + 1)
+  get_next_move(get_available(moves_hash[:puzzle], 9 / (moves_hash[:y] + moves_hash[:x] + 1), (moves_hash[:y] + moves_hash[:x] + 1) % 9), steps_ahead + 1)
 end
 
 def solve(next_move, y, x)
@@ -48,6 +48,7 @@ def show(puzzle)
 end
 
 def get_file
+  print "input file name: "
   puzzle_arr = []
   
   File.open("./puzzles/#{gets.chomp}", "r") do |file|
