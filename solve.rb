@@ -1,5 +1,6 @@
+##### all these work
 def get_available(puzzle, y, x) # The workings of this function should be clear as day
-  puzzle.each { |line| puts line.join(' ') }
+  puts; puzzle.each { |line| puts line.join(' ') }
   {:vals => get_col(puzzle, x) & get_row(puzzle, y) & get_cell(puzzle, y, x), :puzzle => puzzle, :y => y, :x => x}
 end
 
@@ -17,6 +18,7 @@ def get_cell(puzzle, y, x) # as you see, quite clear
     digit.to_s end) - (puzzle[(((y / 3) * 3)..(((y / 3) * 3) + 2))].map do |col|
       col[(((x / 3) * 3)..(((x / 3) * 3) + 2))] end).flatten
 end
+#####
 
 def get_next_move(moves_hash, steps_ahead = 1) # do you see?  DO YOU SEE?  http://www.southparkstudios.com/clips/103836/do-you-see
   # ensure taking at least one step ahead, skipping immutable values, alert if finished
@@ -61,4 +63,5 @@ def get_file
   puzzle_arr
 end
 
-solve(get_next_move(get_available(get_file, 0, 0)), 0, 0)
+#solve(get_next_move(get_available(get_file, 0, 0)), 0, 0)
+get_next_move(get_available(get_file, 0, 0))
