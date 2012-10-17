@@ -1,47 +1,53 @@
-def get_available(puzzle, y, x)
-  return [:immutable] if puzzle[y][x] != "0"
-  ((1..9).to_a.map { |digit| digit.to_s } - puzzle.map { |col| col[x] }) & ((1..9).to_a.map { |digit| digit.to_s } - puzzle[y]) & (((1..9).to_a.map { |digit| digit.to_s }) - (puzzle[(((y / 3) * 3)..(((y / 3) * 3) + 2))].map { |row| row[(((x / 3) * 3)..(((x / 3) * 3) + 2))] }).flatten)
+def get_available(puzzle, y, x) # The workings of this function should be clear as day
+  {:vals => get_col(x) & get_row(y) & get_cell(y, x), :puzzle => puzzle, :y => y, :x => x}
 end
 
-def solve(puzzle, y = 0, x = 0)
-  available_guesses = get_available(puzzle, y, x)
+def get_col(x)
+  (1..9).to_a.map { |digit| digit.to_s } - puzzle.map { |row| row[x] }
+end
 
-  if available_guesses.empty? || available_guesses[0] == :immutable
-    puts "no guesses available         at coord: #{y}, #{x}"
-    puts
-  else
-    print "available guesses: " + available_guesses.join(' ')
-    (9 - ((available_guesses.length * 2) - 1)).times { print " " }
-    puts " at coord: #{y}, #{x}"
-    puts
-  end
-  
-  return if available_guesses.empty?
+def get_row(y)
+  (1..9).to_a.map { |digit| digit.to_s } - puzzle[y]
+end
 
-  available_guesses.each do |box_value|
-    puzzle[y][x] = box_value unless box_value == :immutable
+def get_cell(y, x) # as you see, quite clear
+  ((1..9).to_a.map do |digit|
+    digit.to_s end) - (puzzle[(((y / 3) * 3)..(((y / 3) * 3) + 2))].map do |col|
+      col[(((x / 3) * 3)..(((x / 3) * 3) + 2))] end).flatten
+end
 
-    if y == 8 && x == 8
-      show(puzzle)
-      puts
-      puts "Finished."
-      exit
-    end
-        
-    if x == 8
-      x = 0
-      y += 1
-    else
-      x += 1
-    end
+def get_next_coord(moves_hash, steps_ahead = 1)
+  return {:finished => true, :y => moves_hash[:y], :x => moves_hash[:x], :val => moves_hash[:puzzle][y][x]} if moves_hash[:y] == 8 && moves_hash[:x] == 8 && moves_hash[:puzzle][y][x] != "0"
+  return {
+  return {:finished => false, :puzzle => puzzle, :y => moves_hash[:y], :x => moves_hash[:x]} if moves_hash[:puzzle][y][x] != "0" && steps_ahead > 1
     
-    show(puzzle); puts ## DEBUG
-    solve(puzzle, y, x)
+  elsif
+  else
+    get_next_coord(get_available(puzzle, 9 / (moves_hash[:y] + moves_hash[:x] + steps_ahead), (moves_hash[:y] + moves_hash[:x] + steps_ahead) % 9), steps_ahead + 1)
   end
 end
 
-def show(puzzle)
+def get_next_move(puzzle, y, x)
+  {:val => , :y => , :x => }
+end
+
+def solve(puzzle_in, y = 0, x = 0)
+  next_move = get_next_move(get_next_coord(get_available(puzzle, y, x)))
+  
+  show(puzzle, y + x)
+  
+
+  
+  end
+end
+
+def show(puzzle, stack_level)
+	(stack_level - 1).times { print "|  " }
+  print "___" unless stack_level == 0
+  puts "_________________"
+
   puzzle.each do |line|
+	stack_level.times { print "|  " }
     puts line.join(" ")
   end
 end
@@ -63,4 +69,4 @@ def get_file
   puzzle_arr
 end
 
-solve(get_file)
+solve(get_next_move(get_next_coord(get_available(get_file, 0, 0))))
