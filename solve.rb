@@ -1,6 +1,6 @@
 ##### all these work
 def get_available(puzzle, y, x) # The workings of this function should be clear as day
-  puts; puzzle.each { |line| puts line.join(' ') }
+  show(puzzle)
   {:vals => get_col(puzzle, x) & get_row(puzzle, y) & get_cell(puzzle, y, x), :puzzle => puzzle, :y => y, :x => x}
 end
 
@@ -9,7 +9,7 @@ def get_col(puzzle, x)
 end
 
 def get_row(puzzle, y)
-  puts puzzle[y]
+  #puts puzzle[y]
   (1..9).to_a.map { |digit| digit.to_s } - puzzle[y]
 end
 
@@ -20,12 +20,18 @@ def get_cell(puzzle, y, x) # as you see, quite clear
 end
 #####
 
+# for some reason the coord 0,0 and ONLY 0,0, and for EVERY puzzle produces can't convert nil into array at line 13 in '-'
 def get_next_move(moves_hash, steps_ahead = 1) # do you see?  DO YOU SEE?  http://www.southparkstudios.com/clips/103836/do-you-see
   # ensure taking at least one step ahead, skipping immutable values, alert if finished
+  print "Hello"
   return {:finished => true, :puzzle => moves_hash[:puzzle], :val => moves_hash[:puzzle][8][8]} if moves_hash[:y] == 8 && moves_hash[:x] == 8 && moves_hash[:puzzle][8][8] != "0"
+  print ", world."
   return {:finished => true, :puzzle => moves_hash[:puzzle], :val => moves_hash[:vals][0]} if moves_hash[:y] == 8 && moves_hash[:x] == 8 && moves_hash[:puzzle][8][8] == "0"
-  return {:finished => false, :puzzle => puzzle, :y => moves_hash[:y], :x => moves_hash[:x]} if moves_hash[:puzzle][moves_hash[:y]][moves_hash[:x]] != "0" && steps_ahead > 1
-
+  print "  Spider"
+  return {:finished => false, :puzzle => moves_hash[:puzzle], :y => moves_hash[:y], :x => moves_hash[:x]} if moves_hash[:puzzle][moves_hash[:y]][moves_hash[:x]] != "0" && steps_ahead > 1
+  puts " war."
+  
+  # Error is here?
   get_next_move(get_available(moves_hash[:puzzle], 9 / (moves_hash[:y] + moves_hash[:x] + steps_ahead), (moves_hash[:y] + moves_hash[:x] + steps_ahead) % 9), steps_ahead + 1)
 end
 
@@ -35,13 +41,8 @@ def solve(next_move, y, x)
   solve(get_next_move(get_available(puzzle, y, x)))
 end
 
-def show(puzzle, stack_level)
-	(stack_level - 1).times { print "|  " }
-  print "___" unless stack_level == 0
-  puts "_________________"
-
+def show(puzzle)
   puzzle.each do |line|
-	stack_level.times { print "|  " }
     puts line.join(" ")
   end
 end
@@ -64,4 +65,4 @@ def get_file
 end
 
 #solve(get_next_move(get_available(get_file, 0, 0)), 0, 0)
-get_next_move(get_available(get_file, 0, 0))
+(0..8).each do |y| (0..8).each do |x| get_next_move(get_available(get_file, y, x)) end end
