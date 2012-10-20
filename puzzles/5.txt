@@ -1,0 +1,21 @@
+0 0 1 6 0 0 9 0 0
+0 0 0 8 3 2 0 0 0
+5 0 0 0 8 0 0 0 1
+0 9 0 0 0 0 0 1 6
+0 3 8 0 0 0 5 4 0
+2 7 0 0 0 0 0 6 0
+4 0 0 0 6 0 0 0 5
+0 0 0 2 9 1 0 0 0
+0 0 9 0 0 5 2 0 0
+#
+#
+# Region data
+R O O O O O O O Y
+R R R R O Y Y Y Y
+R R E R O Y B Y Y
+R E E Z Z Z B B Y
+E E Z Z Z Z Z B B
+E Q Q M Z M K K B
+E Q M M M M M K B
+E Q M Q K K M K B
+E Q Q Q Q K K K B

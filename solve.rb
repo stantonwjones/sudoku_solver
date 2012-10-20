@@ -31,11 +31,9 @@ def get_next_mutable_box(moves_hash, steps_ahead = 1)
   get_next_mutable_box(get_available(moves_hash[:puzzle], 9 / (moves_hash[:y] + moves_hash[:x] + 1), (moves_hash[:y] + moves_hash[:x] + 1) % 9), steps_ahead + 1)
 end
 
-def search_for_solution(next_move, y, x)
+def search_for_solution(puzzle, coord)
   #pretty_print(puzzle)
-  if next_move[:finished] then next_move[:puzzle][8][8] = next_move[:val]; show next_move[:puzzle]; exit end
   
-  search_for_solution(get_next_mutable_box(get_available(puzzle, y, x)))
 end
 
 def pretty_print(puzzle)
