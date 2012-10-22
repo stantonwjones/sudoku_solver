@@ -20,20 +20,33 @@ end
 def get_next_mutable_box(moves_hash, steps_ahead = 1)
   # ensure taking at least one step ahead, skipping immutable values, alert if finished
   print "Hello"
-  return {:finished => true, :puzzle => moves_hash[:puzzle], :val => moves_hash[:puzzle][8][8]} if moves_hash[:y] == 8 && moves_hash[:x] == 8 && moves_hash[:puzzle][8][8] != "0"
+  return {
+    :finished => true,
+    :puzzle => moves_hash[:puzzle],
+    :val => moves_hash[:puzzle][8][8]
+  } if moves_hash[:y] == 8 && moves_hash[:x] == 8 && moves_hash[:puzzle][8][8] != "0"
+
   print ", world."
-  return {:finished => true, :puzzle => moves_hash[:puzzle], :val => moves_hash[:vals][0]} if moves_hash[:y] == 8 && moves_hash[:x] == 8 && moves_hash[:puzzle][8][8] == "0"
+  return {:finished => true,
+    :puzzle => moves_hash[:puzzle],
+    :val => moves_hash[:vals][0]
+  } if moves_hash[:y] == 8 && moves_hash[:x] == 8 && moves_hash[:puzzle][8][8] == "0"
+
   print "  Spider"
-  return {:finished => false, :puzzle => moves_hash[:puzzle], :y => moves_hash[:y], :x => moves_hash[:x]} if moves_hash[:puzzle][moves_hash[:y]][moves_hash[:x]] != "0" && steps_ahead > 1
+  return {
+    :finished => false,
+    :puzzle => moves_hash[:puzzle],
+    :y => moves_hash[:y], :x => moves_hash[:x]
+  } if moves_hash[:puzzle][moves_hash[:y]][moves_hash[:x]] != "0" && steps_ahead > 1
   puts " war."
-  
+
   # Error is here?
-  get_next_mutable_box(get_available(moves_hash[:puzzle], 9 / (moves_hash[:y] + moves_hash[:x] + 1), (moves_hash[:y] + moves_hash[:x] + 1) % 9), steps_ahead + 1)
+  get_next_mutable_box(get_available_guesses(moves_hash[:puzzle], 9 / (moves_hash[:y] + moves_hash[:x] + 1), (moves_hash[:y] + moves_hash[:x] + 1) % 9), steps_ahead + 1)
 end
 
 def search_for_solution(puzzle, coord)
   #pretty_print(puzzle)
-  
+
 end
 
 def pretty_print(puzzle)
@@ -42,14 +55,18 @@ def pretty_print(puzzle)
   end
 end
 
-def get_puzzle_from_file(puzzle_name)  
+def get_puzzle_from_file(puzzle_name)
   File.open("./puzzles/#{puzzle_name}", "r") do |file|
-    return Array.new(9).map do |element|
-      file.gets.scan(/\d/)
+    rows = Array.new(9).map do |element|
+        #row = file.gets.scan(/\d*/)
+        row = file.gets.chomp
+        print row
+        row
     end
+    print rows
   end
 end
 
 #search_for_solution(get_next_mutable_box(get_available(get_puzzle_from_file, 0, 0)), 0, 0)
 print "input file name: "
-(0..8).each do |y| (0..8).each do |x| get_next_mutable_box(get_available(get_puzzle_from_file(gets.chomp), y, x)) end end
+(0..8).each do |y| (0..8).each do |x| get_next_mutable_box(get_available_guesses(get_puzzle_from_file(gets.chomp), y, x)) end end
