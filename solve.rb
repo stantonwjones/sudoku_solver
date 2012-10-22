@@ -9,13 +9,13 @@ end
 
 # Returns the unassigned values for this row of the puzzle
 def get_row(puzzle, y)
-  (1..9).to_a.map { |digit| digit.to_s } - puzzle[y].split('')
+  (1..9).to_a.map { |digit| digit.to_s } - puzzle[y]
 end
 
 # Returns the unassigned values for the 3X3 cell the coordinates represent
 def get_cell(puzzle, y, x)
   ((1..9).to_a.map { |digit| digit.to_s }) - (puzzle[(((y / 3) * 3)..(((y / 3) * 3) + 2))].map do |col|
-        col[(((x / 3) * 3)..(((x / 3) * 3) + 2))].split('')
+        col[(((x / 3) * 3)..(((x / 3) * 3) + 2))]
     end
   ).flatten
 end
@@ -74,7 +74,8 @@ def get_puzzle_from_file(puzzle_name)
   File.open("./puzzles/#{puzzle_name}", "r") do |file|
     rows = Array.new(9).map do |element|
         #row = file.gets.scan(/\d*/)
-        file.gets.chomp
+        # Store each row as an array of characters ( strings of length 1 in ruby )
+        file.gets.chomp.split('')
     end
     return rows
   end
