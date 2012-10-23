@@ -74,12 +74,10 @@ def get_next_mutable_box( moves_hash, steps_ahead = 1 )
 
   # Call this function recursively for all possible values at this location
   moves_hash[:vals].each do |possibleVal|
-    nextPuzzleState = possiblePuzzle#.clone
-
     # tentatively set the value of this location in the grid and continue
     # iterating through possible states on the possible puzzle
-    nextPuzzleState[current_y][current_x] = possibleVal
-    get_next_mutable_box(get_available_guesses(nextPuzzleState, next_y, next_x), steps_ahead + 1)
+    possiblePuzzle[current_y][current_x] = possibleVal
+    get_next_mutable_box(get_available_guesses(possiblePuzzle, next_y, next_x), steps_ahead + 1)
   end
 
   # If none of the child states are valid, return false
