@@ -1,4 +1,13 @@
-require './grid.rb'
+# Define a Grid data structure so that is clones itself deeply
+class Grid < Array
+    def clone
+        Grid.new( self.map { |row| row.clone } )
+    end
+end
+
+# The number of iterations
+@@steps = 0
+
 def get_available_guesses(puzzle, y, x)
   possibleColVals = get_col(puzzle, x)
   possibleRowVals = get_row(puzzle, y)
@@ -30,52 +39,19 @@ end
 
 # for some reason the coord 0,0 and ONLY 0,0, and for EVERY puzzle produces can't convert nil into array at line 13 in '-'
 def get_next_mutable_box( moves_hash, steps_ahead = 1 )
-  # ensure taking at least one step ahead, skipping immutable values, alert if finished
-=begin
-  print "Hello"
-  return {
-    :finished => true,
-    :puzzle => moves_hash[:puzzle],
-    :val => moves_hash[:puzzle][8][8]
-  } if moves_hash[:y] == 8 && moves_hash[:x] == 8 && moves_hash[:puzzle][8][8] != "0"
-
-  print ", world."
-  return {:finished => true,
-    :puzzle => moves_hash[:puzzle],
-    :val => moves_hash[:vals][0]
-  } if moves_hash[:y] == 8 && moves_hash[:x] == 8 && moves_hash[:puzzle][8][8] == "0"
-
-  print "  Spider"
-  return {
-    :finished => false,
-    :puzzle => moves_hash[:puzzle],
-    :y => moves_hash[:y], :x => moves_hash[:x]
-  } if moves_hash[:puzzle][moves_hash[:y]][moves_hash[:x]] != "0" && steps_ahead > 1
-  puts " war."
-=end
+  @@steps += 1
 
   # clone the possible puzzle
   possiblePuzzle = moves_hash[:puzzle].clone
-  #print "a possible state of the puzzle:\n"
-  #pretty_print possiblePuzzle
 
   # set the current values for x and y
   current_x = moves_hash[:x]
   current_y = moves_hash[:y]
 
+  # If the value has already been assigned, it is the only possible value
+  # for this location in the grid
   if possiblePuzzle[current_y][current_x] != "0"
-=begin
-    puts "non-zero puzzle loc at: " +
-        "row, " + current_y.to_s +
-        "; column, " + current_x.to_s
-    puts "the value is: " + possiblePuzzle[current_y][current_x]
-=end
     moves_hash[:vals] = [possiblePuzzle[current_y][current_x]]
-  else
-=begin
-    puts "the possible values for row " + current_y.to_s + ", col " + current_x.to_s
-    puts moves_hash[:vals].to_s
-=end
   end
 
   # Make sure there are possible values for this location
@@ -83,9 +59,12 @@ def get_next_mutable_box( moves_hash, steps_ahead = 1 )
 
   # Check for end state
   if current_x == 8 && current_y == 8
+    # We have found a solution if we have assigned a value to every grid
+    # location and there exists a possible value for the last space
     possiblePuzzle[current_y][current_x] = moves_hash[:vals][0]
     puts "\n:::SOLUTION FOUND:::\n"
     pretty_print( possiblePuzzle )
+    puts "\n:::NUM STEPS: " + @@steps.to_s + "\n"
     exit
   end
 
@@ -95,11 +74,10 @@ def get_next_mutable_box( moves_hash, steps_ahead = 1 )
 
   # Call this function recursively for all possible values at this location
   moves_hash[:vals].each do |possibleVal|
-    nextPuzzleState = possiblePuzzle.clone
-    if nextPuzzleState.class != Grid
-        puts('cloning grid returned an array')
-        exit
-    end
+    nextPuzzleState = possiblePuzzle#.clone
+
+    # tentatively set the value of this location in the grid and continue
+    # iterating through possible states on the possible puzzle
     nextPuzzleState[current_y][current_x] = possibleVal
     get_next_mutable_box(get_available_guesses(nextPuzzleState, next_y, next_x), steps_ahead + 1)
   end
@@ -107,10 +85,6 @@ def get_next_mutable_box( moves_hash, steps_ahead = 1 )
   # If none of the child states are valid, return false
   return false
 
-  # call get_next_mutable_box on the next location going left-right, top-bottom
-  # TODO: this is currently just getting the available guesses for each location.  However, we need to add a
-  # way to test for a solved sudoku puzzle and exit the program
-  #get_next_mutable_box(get_available_guesses(moves_hash[:puzzle], next_y, next_x), steps_ahead + 1)
 end
 
 def search_for_solution( puzzle, coord )
@@ -118,6 +92,7 @@ def search_for_solution( puzzle, coord )
 
 end
 
+# Print a puzzle nicely
 def pretty_print( puzzle )
   puzzle.each do |line|
     puts line.join(" ")
@@ -128,10 +103,10 @@ def get_puzzle_from_file(puzzle_name)
   File.open("./puzzles/#{puzzle_name}", "r") do |file|
     rows = Grid.new(9)
     rows.each_index do |index|
-        #row = file.gets.scan(/\d*/)
         # Store each row as an array of characters ( strings of length 1 in ruby )
         rows[index] = file.gets.chomp.split('')
     end
+    # return the populated puzzle values as a Grid object instance
     return rows
   end
 end
@@ -139,11 +114,10 @@ end
 #search_for_solution(get_next_mutable_box(get_available(get_puzzle_from_file, 0, 0)), 0, 0)
 print "input file name: "
 puzzle_from_file = get_puzzle_from_file(gets.chomp)
-=begin
-(0..8).each do |y| (0..8).each do |x|
-    get_next_mutable_box( get_available_guesses(puzzle_from_file.clone, y, x) )
-end end
-=end
+# we now only call get_next_mutable_box once.  Should still terminate with
+# correct puzzle solution
 get_next_mutable_box( get_available_guesses(puzzle_from_file, 0, 0) )
+
+# If a puzzle solution is not found, print and exit
 puts "No Solution Found for the puzzle"
 exit
